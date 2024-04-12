@@ -2,29 +2,28 @@
 
 public class Map
 {
+    private Form form;
     private bool[,] hasWall;
-    private int width;
-    private int height;
-    private int wallSize = 20;
+    private int wallSize;
 
-    public Map(string filePath)
+    public Map(Form form, string filePath, int wallSize)
     {
-        using StreamReader reader = new StreamReader(filePath);
-        string inputData = reader.ReadToEnd();
+        string inputData = this.GetString(filePath);
         string[] rows = inputData.Split('\n', StringSplitOptions.RemoveEmptyEntries);
-        this.height = rows.Length;
-        this.width = rows[0].Length;
-        this.hasWall = new bool[this.width, this.height];
-        for (int y = 0; y < this.height; ++y)
+
+        this.Height = rows.Length;
+        this.Width = rows[0].Length;
+        this.hasWall = new bool[this.Width, this.Height];
+        for (int y = 0; y < this.Height; ++y)
         {
-            for (int x = 0; x < this.width; ++x)
+            for (int x = 0; x < this.Width; ++x)
             {
                 if (rows[y][x] == '@')
                 {
                     this.StartPosition = (x, y);
                     this.hasWall[x, y] = false;
                 }
-                if (rows[y][x] == ' ')
+                else if (rows[y][x] == ' ')
                 {
                     this.hasWall[x, y] = false;
                 }
@@ -34,7 +33,15 @@ public class Map
                 }
             }
         }
+
+        this.wallSize = wallSize;
+        this.form = form;
+        form.Paint += this.DrawMapEvent;
     }
+
+    public int Width { get; private set; }
+
+    public int Height { get; private set; }
 
     public (int, int) StartPosition { get; private set; }
 
@@ -43,25 +50,35 @@ public class Map
         return this.hasWall[x, y];
     }
 
-    public void Draw(Graphics graphics)
+    private string GetString(string filePath)
     {
-        Brush wallBrush = new SolidBrush(Color.Black);
-        for (int y = 0; y < this.height; ++y)
+        using StreamReader reader = new StreamReader(filePath);
+        return reader.ReadToEnd();
+    }
+
+    private void DrawWall(Graphics graphics, int x, int y)
+    {
+        using Pen pen = new Pen(Color.Black, 3);
+        Rectangle wall = new Rectangle(x, y, this.wallSize, this.wallSize);
+        graphics.DrawRectangle(pen, wall);
+    }
+
+    private void Draw(Graphics graphics)
+    {
+        for (int y = 0; y < this.Height; ++y)
         {
-            for (int x = 0; x < this.width; ++x)
+            for (int x = 0; x < this.Width; ++x)
             {
                 if (hasWall[x, y])
                 {
-                    this.DrawWall(
-                        graphics, x * this.wallSize, y * this.wallSize, wallBrush);
+                    this.DrawWall(graphics, x * this.wallSize, y * this.wallSize);
                 }
             }
         }
     }
 
-    private void DrawWall(Graphics graphics, int x, int y, Brush wallBrush)
+    private void DrawMapEvent(object? sender, PaintEventArgs e)
     {
-        Rectangle wall = new Rectangle(x, y, this.wallSize, this.wallSize);
-        graphics.FillRectangle(wallBrush, wall);
+        this.Draw(e.Graphics);
     }
 }

@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "GameGUI": {
+      "commandName": "Project",
+      "commandLineArgs": "../../../Map.txt"
+    }
+  }
+}
