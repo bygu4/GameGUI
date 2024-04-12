@@ -36,38 +36,6 @@
             this.Text = "Form1";
         }
 
-        private void DrawWall(
-            int x, int y, int size, System.Windows.Forms.PaintEventArgs e)
-        {
-            Rectangle wall = new Rectangle(x, y, WallSize, WallSize);
-            
-        }
-
-        private void DrawMap(
-            string fileName, System.Windows.Forms.PaintEventArgs e)
-        {
-            using (StreamReader reader = new StreamReader(fileName))
-            {
-                int x = 0;
-                int y = 0;
-                while (!reader.EndOfStream)
-                {
-                    char next = (char)reader.Read();
-                    if (next == '\n')
-                    {
-                        x = 0;
-                        y += WallSize
-;
-                    }
-                    else if (next != ' ')
-                    {
-                        DrawWall(x, y, WallSize, e);
-                    }
-                    x += WallSize;
-                }
-            }
-        }
-
         #endregion
     }
 }
