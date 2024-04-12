@@ -1,14 +1,11 @@
-﻿using System.Drawing.Configuration;
-using System.Security.Cryptography.Xml;
-
-namespace Game;
+﻿namespace Game;
 
 public class Map
 {
     private bool[,] hasWall;
     private int width;
     private int height;
-    private int WallSize = 20;
+    private int wallSize = 20;
 
     public Map(string filePath)
     {
@@ -41,7 +38,12 @@ public class Map
 
     public (int, int) StartPosition { get; private set; }
 
-    public void Draw()
+    public bool HasWall(int x, int y)
+    {
+        return this.hasWall[x, y];
+    }
+
+    public void Draw(Graphics graphics)
     {
         Brush wallBrush = new SolidBrush(Color.Black);
         for (int y = 0; y < this.height; ++y)
@@ -50,15 +52,16 @@ public class Map
             {
                 if (hasWall[x, y])
                 {
-                    this.DrawWall(x, y, );
+                    this.DrawWall(
+                        graphics, x * this.wallSize, y * this.wallSize, wallBrush);
                 }
             }
         }
     }
 
-    private void DrawWall(int x, int y, Brush wallBrush)
+    private void DrawWall(Graphics graphics, int x, int y, Brush wallBrush)
     {
-        Rectangle wall = new Rectangle(x, y, WallSize, WallSize);
-        
+        Rectangle wall = new Rectangle(x, y, this.wallSize, this.wallSize);
+        graphics.FillRectangle(wallBrush, wall);
     }
 }
